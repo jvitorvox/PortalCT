@@ -467,7 +467,7 @@
 
     private async Task DeletePlan(int planId)
     {
-        if (await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja excluir este plano de ação?"))
+        if (await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Tem certeza que deseja excluir este plano de ação?" }))
         {
             allPlans.RemoveAll(p => p.Id == planId);
             FilterPlans();
