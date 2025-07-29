@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const { connectDB } = require('./src/config/database');
 require('dotenv').config();
 
 const authRoutes = require('./src/routes/auth');
@@ -17,6 +18,11 @@ const departmentRoutes = require('./src/routes/departments');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Inicializar banco de dados
+connectDB().catch(err => {
+  console.log('⚠️ Aplicação iniciando sem conexão com banco de dados');
+});
 
 // Rate limiting
 const limiter = rateLimit({
