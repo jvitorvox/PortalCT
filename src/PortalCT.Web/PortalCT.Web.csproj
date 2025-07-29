@@ -21,9 +21,4 @@
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="appsettings.Production.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
 </Project>
