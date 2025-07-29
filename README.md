@@ -32,9 +32,8 @@ Portal Casa & Terra modernizado com Node.js, Express e SQL Server. Sistema de ge
 ## 🚀 Como Executar
 
 ### Pré-requisitos
-- Node.js 18+ 
 - SQL Server (LocalDB ou instância completa)
-- NPM ou Yarn
+- .NET 8.0 SDK
 
 ### Passos
 
@@ -44,12 +43,7 @@ git clone [url-do-repositorio]
 cd PortalCT
 ```
 
-2. **Instale as dependências**
-```bash
-npm install
-```
-
-3. **Configure as variáveis de ambiente**
+2. **Configure as variáveis de ambiente**
 Copie `.env.example` para `.env` e configure:
 ```env
 DB_HOST=(localdb)\\mssqllocaldb
@@ -57,12 +51,12 @@ DB_NAME=PortalCT_Modern
 JWT_SECRET=casa-terra-jwt-secret-key-2025
 ```
 
-4. **Execute a aplicação**
+3. **Execute a aplicação**
 ```bash
-npm start
+dotnet run --project src/PortalCT.Web
 ```
 
-5. **Acesse no navegador**
+4. **Acesse no navegador**
 ```
 http://localhost:3000
 ```
@@ -132,29 +126,29 @@ Para desenvolvimento, qualquer usuário/senha será aceito.
 ## 🧪 Scripts Disponíveis
 
 ```bash
-# Iniciar servidor de desenvolvimento
-npm run dev
+# Iniciar servidor de desenvolvimento  
+dotnet watch run --project src/PortalCT.Web
 
 # Iniciar servidor de produção
-npm start
+dotnet run --project src/PortalCT.Web
 
 # Executar testes
-npm test
+dotnet test
 
 # Build da aplicação
-npm run build
+dotnet build
 ```
 
 ## 📦 Deploy
 
 ### Desenvolvimento
 ```bash
-npm run dev
+dotnet watch run --project src/PortalCT.Web
 ```
 
 ### Produção
 1. Configure as variáveis de ambiente em `.env`
-2. Execute `npm start`
+2. Execute `dotnet run --project src/PortalCT.Web`
 3. Configure proxy reverso (Nginx) se necessário
 4. Configure HTTPS obrigatório
 
