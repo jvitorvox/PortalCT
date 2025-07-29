@@ -1,34 +1,26 @@
-# Portal Casa & Terra - Versão Modernizada
+# Portal Casa & Terra - Node.js
 
 ## 🚀 Sobre o Projeto
 
-Esta é a versão modernizada do Portal Casa & Terra, migrada de ASP.NET Web Forms (VB.NET) para ASP.NET Core 8.0 com Blazor Server (C#).
-
-## 🏗️ Arquitetura
-
-O projeto segue uma arquitetura em camadas:
-
-- **PortalCT.Web**: Interface do usuário (Blazor Server)
-- **PortalCT.Core**: Lógica de negócio e entidades
-- **PortalCT.Infrastructure**: Acesso a dados e serviços externos
+Portal Casa & Terra modernizado com Node.js, Express e SQL Server. Sistema de gestão empresarial com autenticação integrada e interface responsiva.
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **ASP.NET Core 8.0**
-- **Blazor Server**
-- **Entity Framework Core**
-- **SQL Server**
-- **Bootstrap 5**
-- **Font Awesome 6**
+- **Node.js** com Express.js
+- **SQL Server** com driver nativo
+- **JWT** para autenticação
+- **Bootstrap 5** para interface
+- **Font Awesome 6** para ícones
 
 ## 📋 Funcionalidades
 
 ### ✅ Implementadas
-- [x] Sistema de autenticação modernizado
-- [x] Dashboard responsivo
+- [x] Sistema de autenticação com webservice legado
+- [x] Dashboard responsivo com estatísticas
 - [x] Navegação por departamentos
 - [x] Interface moderna com Bootstrap 5
-- [x] Integração com serviços legados
+- [x] APIs RESTful completas
+- [x] Middleware de segurança e autorização
 
 ### 🔄 Em Desenvolvimento
 - [ ] Módulos específicos por departamento
@@ -40,9 +32,9 @@ O projeto segue uma arquitetura em camadas:
 ## 🚀 Como Executar
 
 ### Pré-requisitos
-- .NET 8.0 SDK
+- Node.js 18+ 
 - SQL Server (LocalDB ou instância completa)
-- Visual Studio 2022 ou VS Code
+- NPM ou Yarn
 
 ### Passos
 
@@ -52,30 +44,27 @@ git clone [url-do-repositorio]
 cd PortalCT
 ```
 
-2. **Configure a string de conexão**
-Edite `src/PortalCT.Web/appsettings.Development.json`:
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=PortalCT_Modern;Trusted_Connection=true"
-  }
-}
+2. **Instale as dependências**
+```bash
+npm install
 ```
 
-3. **Execute as migrações**
-```bash
-cd src/PortalCT.Web
-dotnet ef database update
+3. **Configure as variáveis de ambiente**
+Copie `.env.example` para `.env` e configure:
+```env
+DB_HOST=(localdb)\\mssqllocaldb
+DB_NAME=PortalCT_Modern
+JWT_SECRET=casa-terra-jwt-secret-key-2025
 ```
 
 4. **Execute a aplicação**
 ```bash
-dotnet run
+npm start
 ```
 
 5. **Acesse no navegador**
 ```
-https://localhost:5001
+http://localhost:3000
 ```
 
 ## 🔐 Autenticação
@@ -86,22 +75,22 @@ O sistema mantém compatibilidade com o webservice de autenticação existente:
 
 Para desenvolvimento, qualquer usuário/senha será aceito.
 
-## 📁 Estrutura de Pastas
+## 📁 Estrutura do Projeto
 
 ```
-src/
-├── PortalCT.Core/              # Entidades e DTOs
-│   ├── Entities/               # Modelos de dados
-│   ├── DTOs/                   # Data Transfer Objects
-│   └── Interfaces/             # Contratos de serviços
-├── PortalCT.Infrastructure/    # Implementações
-│   ├── Data/                   # DbContext
-│   ├── Repositories/           # Acesso a dados
-│   └── Services/               # Serviços de negócio
-└── PortalCT.Web/              # Interface do usuário
-    ├── Pages/                  # Páginas Blazor
-    ├── Shared/                 # Componentes compartilhados
-    └── wwwroot/               # Arquivos estáticos
+├── server.js                  # Servidor principal Express
+├── src/
+│   ├── config/                # Configuração do banco de dados
+│   ├── models/                # Modelos de dados (User, Information)
+│   ├── services/              # Serviços de negócio e autenticação
+│   ├── routes/                # Rotas da API REST
+│   └── middleware/            # Middlewares de auth e segurança
+├── public/                    # Frontend (HTML, CSS, JS)
+│   ├── index.html            # Página principal
+│   ├── css/style.css         # Estilos customizados
+│   ├── js/app.js             # JavaScript da aplicação
+│   └── images/               # Imagens e assets
+└── package.json              # Dependências e scripts
 ```
 
 ## 🎨 Design System
@@ -113,47 +102,70 @@ src/
 - **Warning**: #ffb53e (Laranja)
 - **Danger**: #f9243f (Vermelho)
 
-### Componentes
-- **Cards**: Bordas arredondadas, sombras suaves
-- **Botões**: Efeitos hover, ícones Font Awesome
-- **Navegação**: Sidebar responsiva com animações
+## 🔄 APIs Disponíveis
 
-## 🔄 Migração do Projeto Original
+### Autenticação
+- `POST /api/auth/login` - Login do usuário
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Dados do usuário logado
+- `POST /api/auth/refresh` - Renovar token
 
-### O que foi Migrado
-- ✅ Estrutura de autenticação
-- ✅ Modelo de dados principal
-- ✅ Lógica de permissões
-- ✅ Interface base
+### Dashboard
+- `GET /api/dashboard` - Dados do dashboard
+- `GET /api/dashboard/stats` - Estatísticas detalhadas
 
-### O que Precisa ser Migrado
-- [ ] Todas as páginas específicas (.aspx → .razor)
-- [ ] Lógica de negócio VB.NET → C#
-- [ ] Relatórios e gráficos
-- [ ] Upload de arquivos
-- [ ] Integração completa com webservices
+### Informações
+- `GET /api/informations` - Listar informações
+- `POST /api/informations` - Criar informação
+- `PUT /api/informations/:id` - Atualizar informação
+- `DELETE /api/informations/:id` - Deletar informação
 
-## 🧪 Testes
+### Departamentos
+- `GET /api/departments` - Listar departamentos
+- `GET /api/departments/:id` - Buscar departamento
+
+### Usuários
+- `GET /api/users` - Listar usuários (admin)
+- `GET /api/users/:id` - Buscar usuário
+- `GET /api/users/:id/permissions` - Permissões do usuário
+
+## 🧪 Scripts Disponíveis
 
 ```bash
-# Executar testes unitários
-dotnet test
+# Iniciar servidor de desenvolvimento
+npm run dev
 
-# Executar com cobertura
-dotnet test --collect:"XPlat Code Coverage"
+# Iniciar servidor de produção
+npm start
+
+# Executar testes
+npm test
+
+# Build da aplicação
+npm run build
 ```
 
 ## 📦 Deploy
 
 ### Desenvolvimento
 ```bash
-dotnet publish -c Release -o ./publish
+npm run dev
 ```
 
 ### Produção
-- Configure as strings de conexão em `appsettings.Production.json`
-- Use Docker ou IIS para hospedagem
-- Configure HTTPS obrigatório
+1. Configure as variáveis de ambiente em `.env`
+2. Execute `npm start`
+3. Configure proxy reverso (Nginx) se necessário
+4. Configure HTTPS obrigatório
+
+## 🔒 Segurança
+
+- Rate limiting configurado
+- Helmet.js para headers de segurança
+- CORS configurado
+- JWT com expiração
+- Validação de entrada com express-validator
+- Sanitização de dados
 
 ## 🤝 Contribuição
 
