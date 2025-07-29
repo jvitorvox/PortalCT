@@ -1,7 +1,4 @@
 @inherits LayoutView
-@inject IJSRuntime JSRuntime
-@inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="page">
     <div class="sidebar">
@@ -9,24 +6,8 @@
     </div>
 
     <main>
-        <div class="top-row px-4 auth">
-            <AuthorizeView>
-                <Authorized>
-                    <div class="d-flex align-items-center">
-                        <span class="me-3">
-                            <i class="fas fa-user"></i> @context.User.Identity?.Name
-                        </span>
-                        <button class="btn btn-outline-light btn-sm" @onclick="Logout">
-                            <i class="fas fa-sign-out-alt"></i> Sair
-                        </button>
-                    </div>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="/login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Entrar
-                    </a>
-                </NotAuthorized>
-            </AuthorizeView>
+        <div class="top-row px-4">
+            <h1 class="text-primary">Portal Casa & Terra</h1>
         </div>
 
         <article class="content px-4">
@@ -34,10 +15,3 @@
         </article>
     </main>
 </div>
-
-@code {
-    private async Task Logout()
-    {
-        Navigation.NavigateTo("/logout", true);
-    }
-}
