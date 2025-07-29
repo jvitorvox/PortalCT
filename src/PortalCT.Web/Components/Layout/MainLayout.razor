@@ -1,0 +1,45 @@
+@inherits LayoutComponentBase
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="page">
+    <AuthorizeView>
+        <Authorized>
+            <div class="sidebar">
+                <NavMenu />
+            </div>
+
+            <main>
+                <div class="top-row px-4">
+                    <div class="navbar navbar-dark">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="">
+                                <i class="fas fa-home me-2"></i>
+                                Portal Casa & Terra
+                            </a>
+                            <div class="navbar-nav ms-auto">
+                                <div class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user me-1"></i>
+                                        @context.User.Identity?.Name
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="/logout">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <article class="content px-4">
+                    @Body
+                </article>
+            </main>
+        </Authorized>
+        <NotAuthorized>
+            <RedirectToLogin />
+        </NotAuthorized>
+    </AuthorizeView>
+</div>
