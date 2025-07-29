@@ -18,7 +18,6 @@ const departmentRoutes = require('./src/routes/departments');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const HOST = '0.0.0.0';
 
 // Inicializar banco de dados
 connectDB().catch(err => {
@@ -99,10 +98,10 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, HOST, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Portal Casa & Terra rodando na porta ${PORT}`);
   console.log(`📱 Ambiente: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 URL: http://${HOST}:${PORT}`);
+  console.log(`🌐 URL: http://0.0.0.0:${PORT}`);
 });
 
 module.exports = app;
