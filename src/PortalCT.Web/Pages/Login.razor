@@ -153,9 +153,10 @@
                 errorMessage = result.Message;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            errorMessage = "Erro interno do servidor. Tente novamente.";
+            // Login failed - invalid credentials
+            errorMessage = "Usuário ou senha inválidos.";
         }
         finally
         {
