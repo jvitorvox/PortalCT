@@ -1,0 +1,174 @@
+@page "/login"
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using System.Security.Claims
+@using System.ComponentModel.DataAnnotations
+@using PortalCT.Web.Services
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Login - Portal Casa & Terra</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <h4 class="text-center mb-4">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Portal Casa & Terra
+            </h4>
+        </div>
+
+        <div class="login-body">
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    @errorMessage
+                </div>
+            }
+
+            <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+                <DataAnnotationsValidator />
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuário</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <InputText @bind-Value="loginModel.Username" class="form-control" id="username" placeholder="Digite seu usuário" />
+                    </div>
+                    <ValidationMessage For="@(() => loginModel.Username)" />
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Senha</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <InputText @bind-Value="loginModel.Password" type="password" class="form-control" id="password" placeholder="Digite sua senha" />
+                    </div>
+                    <ValidationMessage For="@(() => loginModel.Password)" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        <text>Entrando...</text>
+                    }
+                    else
+                    {
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        <text>ENTRAR</text>
+                    }
+                </button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .login-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+@code {
+    private LoginModel loginModel = new();
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var result = await AuthService.AuthenticateAsync(loginModel.Username, loginModel.Password);
+
+            if (result.Success && result.User != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, result.User.Username),
+                    new Claim(ClaimTypes.Email, result.User.Email),
+                    new Claim("FullName", result.User.FullName),
+                    new Claim("UserId", result.User.Id.ToString())
+                };
+
+                // Adicionar permissões como claims
+                foreach (var permission in result.Permissions)
+                {
+                    claims.Add(new Claim("Permission", permission));
+                }
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                await JSRuntime.InvokeVoidAsync("eval", $@"
+                    fetch('/login', {{
+                        method: 'POST',
+                        headers: {{ 'Content-Type': 'application/json' }},
+                        body: JSON.stringify({{ username: '{loginModel.Username}', password: '{loginModel.Password}' }})
+                    }}).then(() => window.location.href = '/');
+                ");
+            }
+            else
+            {
+                errorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Erro interno do servidor. Tente novamente.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    public class LoginModel
+    {
+        [Required(ErrorMessage = "Usuário é obrigatório")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Senha é obrigatória")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
