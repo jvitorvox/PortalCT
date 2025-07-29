@@ -1,0 +1,516 @@
+@page "/planos-acao"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Planos de Ação - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-tasks me-2"></i>
+                    Planos de Ação
+                </h2>
+                <div>
+                    <button class="btn btn-primary" @onclick="ShowNewPlanModal">
+                        <i class="fas fa-plus me-1"></i>
+                        Novo Plano
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" @bind="selectedStatus" @onchange="FilterPlans">
+                                <option value="">Todos</option>
+                                <option value="Planejado">Planejado</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Departamento</label>
+                            <select class="form-select" @bind="selectedDepartment" @onchange="FilterPlans">
+                                <option value="">Todos</option>
+                                <option value="TI">TI</option>
+                                <option value="RH">RH</option>
+                                <option value="Financeiro">Financeiro</option>
+                                <option value="Obras">Obras</option>
+                                <option value="Comercial">Comercial</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Prioridade</label>
+                            <select class="form-select" @bind="selectedPriority" @onchange="FilterPlans">
+                                <option value="">Todas</option>
+                                <option value="Baixa">Baixa</option>
+                                <option value="Média">Média</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Crítica">Crítica</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-secondary w-100" @onclick="ClearFilters">
+                                <i class="fas fa-times me-1"></i>
+                                Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Planos -->
+    <div class="row">
+        @if (filteredPlans?.Any() == true)
+        {
+            @foreach (var plan in filteredPlans)
+            {
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 font-weight-bold">@plan.Title</h6>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" @onclick="() => ViewPlan(plan)">
+                                        <i class="fas fa-eye me-2"></i>Visualizar
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="#" @onclick="() => EditPlan(plan)">
+                                        <i class="fas fa-edit me-2"></i>Editar
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" @onclick="() => DeletePlan(plan.Id)">
+                                        <i class="fas fa-trash me-2"></i>Excluir
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text text-muted mb-3">@plan.Description</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Progresso</small>
+                                    <small class="text-muted">@plan.Progress%</small>
+                                </div>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-@GetProgressColor(plan.Progress)" 
+                                         style="width: @plan.Progress%"></div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Status</small>
+                                    <span class="badge bg-@GetStatusColor(plan.Status)">@plan.Status</span>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Prioridade</small>
+                                    <span class="badge bg-@GetPriorityColor(plan.Priority)">@plan.Priority</span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Departamento</small>
+                                    <strong>@plan.Department</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Responsável</small>
+                                    <strong>@plan.Responsible</strong>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Início</small>
+                                    <strong>@plan.StartDate.ToString("dd/MM/yyyy")</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted d-block">Prazo</small>
+                                    <strong class="@(plan.EndDate < DateTime.Now && plan.Status != "Concluído" ? "text-danger" : "")">
+                                        @plan.EndDate.ToString("dd/MM/yyyy")
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary btn-sm" @onclick="() => ViewPlan(plan)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-success btn-sm" @onclick="() => UpdateProgress(plan)">
+                                    <i class="fas fa-chart-line"></i>
+                                </button>
+                                <button class="btn btn-outline-info btn-sm" @onclick="() => AddComment(plan)">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhum plano de ação encontrado</h5>
+                        <p class="text-muted">Crie seu primeiro plano de ação clicando no botão "Novo Plano"</p>
+                        <button class="btn btn-primary" @onclick="ShowNewPlanModal">
+                            <i class="fas fa-plus me-1"></i>
+                            Criar Primeiro Plano
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal para Novo/Editar Plano -->
+@if (showPlanModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @(editingPlan != null ? "Editar Plano de Ação" : "Novo Plano de Ação")
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="ClosePlanModal"></button>
+                </div>
+                <EditForm Model="@planModel" OnValidSubmit="@SavePlan">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Título</label>
+                                <InputText @bind-Value="planModel.Title" class="form-control" />
+                                <ValidationMessage For="@(() => planModel.Title)" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Prioridade</label>
+                                <InputSelect @bind-Value="planModel.Priority" class="form-select">
+                                    <option value="">Selecione...</option>
+                                    <option value="Baixa">Baixa</option>
+                                    <option value="Média">Média</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Crítica">Crítica</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => planModel.Priority)" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <InputTextArea @bind-Value="planModel.Description" class="form-control" rows="3" />
+                            <ValidationMessage For="@(() => planModel.Description)" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Departamento</label>
+                                <InputSelect @bind-Value="planModel.Department" class="form-select">
+                                    <option value="">Selecione...</option>
+                                    <option value="TI">TI</option>
+                                    <option value="RH">RH</option>
+                                    <option value="Financeiro">Financeiro</option>
+                                    <option value="Obras">Obras</option>
+                                    <option value="Comercial">Comercial</option>
+                                    <option value="Jurídico">Jurídico</option>
+                                    <option value="Contábil">Contábil</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => planModel.Department)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Responsável</label>
+                                <InputText @bind-Value="planModel.Responsible" class="form-control" />
+                                <ValidationMessage For="@(() => planModel.Responsible)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data de Início</label>
+                                <InputDate @bind-Value="planModel.StartDate" class="form-control" />
+                                <ValidationMessage For="@(() => planModel.StartDate)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data de Término</label>
+                                <InputDate @bind-Value="planModel.EndDate" class="form-control" />
+                                <ValidationMessage For="@(() => planModel.EndDate)" />
+                            </div>
+                        </div>
+                        @if (editingPlan != null)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Status</label>
+                                    <InputSelect @bind-Value="planModel.Status" class="form-select">
+                                        <option value="Planejado">Planejado</option>
+                                        <option value="Em Andamento">Em Andamento</option>
+                                        <option value="Concluído">Concluído</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    </InputSelect>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Progresso (%)</label>
+                                    <InputNumber @bind-Value="planModel.Progress" class="form-control" min="0" max="100" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="ClosePlanModal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            @(editingPlan != null ? "Atualizar" : "Criar")
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ActionPlanModel> allPlans = new();
+    private List<ActionPlanModel> filteredPlans = new();
+    private string selectedStatus = string.Empty;
+    private string selectedDepartment = string.Empty;
+    private string selectedPriority = string.Empty;
+    private bool showPlanModal = false;
+    private bool isLoading = false;
+    private ActionPlanModel? editingPlan;
+    private PlanFormModel planModel = new();
+
+    protected override void OnInitialized()
+    {
+        LoadSampleData();
+        FilterPlans();
+    }
+
+    private void LoadSampleData()
+    {
+        allPlans = new List<ActionPlanModel>
+        {
+            new() { Id = 1, Title = "Migração do Portal", Description = "Migrar sistema para .NET Core", Department = "TI", Responsible = "João Silva", Priority = "Alta", Status = "Em Andamento", Progress = 75, StartDate = DateTime.Now.AddDays(-30), EndDate = DateTime.Now.AddDays(15) },
+            new() { Id = 2, Title = "Treinamento de Segurança", Description = "Capacitação em segurança do trabalho", Department = "RH", Responsible = "Maria Santos", Priority = "Média", Status = "Planejado", Progress = 0, StartDate = DateTime.Now.AddDays(5), EndDate = DateTime.Now.AddDays(35) },
+            new() { Id = 3, Title = "Auditoria Financeira", Description = "Revisão dos processos financeiros", Department = "Financeiro", Responsible = "Carlos Lima", Priority = "Alta", Status = "Em Andamento", Progress = 45, StartDate = DateTime.Now.AddDays(-15), EndDate = DateTime.Now.AddDays(20) },
+            new() { Id = 4, Title = "Reforma do Escritório", Description = "Modernização do ambiente de trabalho", Department = "Obras", Responsible = "Ana Costa", Priority = "Baixa", Status = "Concluído", Progress = 100, StartDate = DateTime.Now.AddDays(-60), EndDate = DateTime.Now.AddDays(-10) },
+            new() { Id = 5, Title = "Campanha de Marketing", Description = "Nova campanha publicitária", Department = "Comercial", Responsible = "Pedro Oliveira", Priority = "Crítica", Status = "Em Andamento", Progress = 30, StartDate = DateTime.Now.AddDays(-10), EndDate = DateTime.Now.AddDays(25) }
+        };
+    }
+
+    private void FilterPlans()
+    {
+        filteredPlans = allPlans.Where(p =>
+            (string.IsNullOrEmpty(selectedStatus) || p.Status == selectedStatus) &&
+            (string.IsNullOrEmpty(selectedDepartment) || p.Department == selectedDepartment) &&
+            (string.IsNullOrEmpty(selectedPriority) || p.Priority == selectedPriority)
+        ).ToList();
+    }
+
+    private void ClearFilters()
+    {
+        selectedStatus = string.Empty;
+        selectedDepartment = string.Empty;
+        selectedPriority = string.Empty;
+        FilterPlans();
+    }
+
+    private string GetStatusColor(string status) => status switch
+    {
+        "Planejado" => "secondary",
+        "Em Andamento" => "primary",
+        "Concluído" => "success",
+        "Cancelado" => "danger",
+        _ => "light"
+    };
+
+    private string GetPriorityColor(string priority) => priority switch
+    {
+        "Crítica" => "danger",
+        "Alta" => "warning",
+        "Média" => "info",
+        "Baixa" => "secondary",
+        _ => "light"
+    };
+
+    private string GetProgressColor(int progress) => progress switch
+    {
+        >= 80 => "success",
+        >= 60 => "info",
+        >= 40 => "warning",
+        _ => "danger"
+    };
+
+    private void ShowNewPlanModal()
+    {
+        editingPlan = null;
+        planModel = new PlanFormModel
+        {
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now.AddDays(30)
+        };
+        showPlanModal = true;
+    }
+
+    private void EditPlan(ActionPlanModel plan)
+    {
+        editingPlan = plan;
+        planModel = new PlanFormModel
+        {
+            Title = plan.Title,
+            Description = plan.Description,
+            Department = plan.Department,
+            Responsible = plan.Responsible,
+            Priority = plan.Priority,
+            Status = plan.Status,
+            Progress = plan.Progress,
+            StartDate = plan.StartDate,
+            EndDate = plan.EndDate
+        };
+        showPlanModal = true;
+    }
+
+    private void ClosePlanModal()
+    {
+        showPlanModal = false;
+        editingPlan = null;
+        planModel = new PlanFormModel();
+    }
+
+    private async Task SavePlan()
+    {
+        isLoading = true;
+        try
+        {
+            await Task.Delay(1000); // Simular salvamento
+
+            if (editingPlan != null)
+            {
+                // Atualizar plano existente
+                editingPlan.Title = planModel.Title;
+                editingPlan.Description = planModel.Description;
+                editingPlan.Department = planModel.Department;
+                editingPlan.Responsible = planModel.Responsible;
+                editingPlan.Priority = planModel.Priority;
+                editingPlan.Status = planModel.Status;
+                editingPlan.Progress = planModel.Progress;
+                editingPlan.StartDate = planModel.StartDate;
+                editingPlan.EndDate = planModel.EndDate;
+            }
+            else
+            {
+                // Criar novo plano
+                var newPlan = new ActionPlanModel
+                {
+                    Id = allPlans.Max(p => p.Id) + 1,
+                    Title = planModel.Title,
+                    Description = planModel.Description,
+                    Department = planModel.Department,
+                    Responsible = planModel.Responsible,
+                    Priority = planModel.Priority,
+                    Status = "Planejado",
+                    Progress = 0,
+                    StartDate = planModel.StartDate,
+                    EndDate = planModel.EndDate
+                };
+                allPlans.Add(newPlan);
+            }
+
+            FilterPlans();
+            ClosePlanModal();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ViewPlan(ActionPlanModel plan)
+    {
+        // Implementar visualização detalhada
+        Console.WriteLine($"Visualizar plano: {plan.Title}");
+    }
+
+    private void UpdateProgress(ActionPlanModel plan)
+    {
+        // Implementar atualização de progresso
+        Console.WriteLine($"Atualizar progresso do plano: {plan.Title}");
+    }
+
+    private void AddComment(ActionPlanModel plan)
+    {
+        // Implementar adição de comentários
+        Console.WriteLine($"Adicionar comentário ao plano: {plan.Title}");
+    }
+
+    private async Task DeletePlan(int planId)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja excluir este plano de ação?"))
+        {
+            allPlans.RemoveAll(p => p.Id == planId);
+            FilterPlans();
+        }
+    }
+
+    public class ActionPlanModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public string Responsible { get; set; } = string.Empty;
+        public string Priority { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public int Progress { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+    }
+
+    public class PlanFormModel
+    {
+        [Required(ErrorMessage = "Título é obrigatório")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Descrição é obrigatória")]
+        public string Description { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Departamento é obrigatório")]
+        public string Department { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Responsável é obrigatório")]
+        public string Responsible { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Prioridade é obrigatória")]
+        public string Priority { get; set; } = string.Empty;
+
+        public string Status { get; set; } = "Planejado";
+        public int Progress { get; set; } = 0;
+
+        [Required(ErrorMessage = "Data de início é obrigatória")]
+        public DateTime StartDate { get; set; } = DateTime.Now;
+
+        [Required(ErrorMessage = "Data de término é obrigatória")]
+        public DateTime EndDate { get; set; } = DateTime.Now.AddDays(30);
+    }
+}

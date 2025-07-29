@@ -1,0 +1,433 @@
+@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using PortalCT.Web.Services
+@inject IInformationService InformationService
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
+
+<PageTitle>Dashboard - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Dashboard
+                </h2>
+                <div class="text-muted">
+                    <i class="fas fa-clock me-1"></i>
+                    Último acesso: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Informações Ativas
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@totalInformations</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-info-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Departamentos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-building fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Usuários Online
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pendências
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@pendingItems</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações Recentes -->
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-bullhorn me-2"></i>
+                        Informações Recentes
+                    </h6>
+                    @if (hasPermission)
+                    {
+                        <button class="btn btn-primary btn-sm" @onclick="ShowAddInformationModal">
+                            <i class="fas fa-plus me-1"></i>
+                            Nova Informação
+                        </button>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (informations?.Any() == true)
+                    {
+                        @foreach (var info in informations.Take(5))
+                        {
+                            <div class="alert alert-@GetPriorityClass(info.Priority) alert-dismissible fade show" role="alert">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@info.Priority</strong> - @info.Content
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            @info.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                            @if (!string.IsNullOrEmpty(info.Sector))
+                                            {
+                                                <span class="badge bg-secondary ms-2">@info.Sector</span>
+                                            }
+                                        </small>
+                                    </div>
+                                    @if (hasPermission)
+                                    {
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary btn-sm" @onclick="() => EditInformation(info)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger btn-sm" @onclick="() => DeleteInformation(info.Id)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-info-circle fa-3x mb-3"></i>
+                            <p>Nenhuma informação disponível no momento.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Acesso Rápido -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-rocket me-2"></i>
+                        Acesso Rápido
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        @foreach (var permission in userPermissions)
+                        {
+                            <a href="@GetDepartmentUrl(permission)" class="list-group-item list-group-item-action">
+                                <i class="@GetDepartmentIcon(permission) me-2"></i>
+                                @GetDepartmentName(permission)
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Nova Informação -->
+@if (showAddModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @(editingInformation != null ? "Editar Informação" : "Nova Informação")
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <EditForm Model="@informationModel" OnValidSubmit="@SaveInformation">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Conteúdo</label>
+                            <InputTextArea @bind-Value="informationModel.Content" class="form-control" rows="3" />
+                            <ValidationMessage For="@(() => informationModel.Content)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prioridade</label>
+                            <InputSelect @bind-Value="informationModel.Priority" class="form-select">
+                                <option value="">Selecione...</option>
+                                <option value="Baixa">Baixa</option>
+                                <option value="Media">Média</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Critica">Crítica</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => informationModel.Priority)" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Setor</label>
+                            <InputSelect @bind-Value="informationModel.Sector" class="form-select">
+                                <option value="T">Todos</option>
+                                <option value="TI">TI</option>
+                                <option value="RH">RH</option>
+                                <option value="FIN">Financeiro</option>
+                                <option value="OBRAS">Obras</option>
+                                <option value="COM">Comercial</option>
+                                <option value="JUR">Jurídico</option>
+                                <option value="CONT">Contábil</option>
+                            </InputSelect>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            @(editingInformation != null ? "Atualizar" : "Salvar")
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Information>? informations;
+    private List<string> userPermissions = new();
+    private int totalInformations = 0;
+    private int pendingItems = 0;
+    private bool hasPermission = false;
+    private bool showAddModal = false;
+    private bool isLoading = false;
+    private Information? editingInformation;
+    private InformationModel informationModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                // Carregar permissões do usuário
+                userPermissions = user.Claims
+                    .Where(c => c.Type == "Permission")
+                    .Select(c => c.Value)
+                    .ToList();
+
+                hasPermission = userPermissions.Contains("PAINEL TI") || userPermissions.Contains("@@@@");
+
+                // Carregar informações
+                informations = await InformationService.GetAllAsync();
+                totalInformations = informations?.Count ?? 0;
+                pendingItems = informations?.Count(i => i.Priority == "Alta" || i.Priority == "Critica") ?? 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log error
+            Console.WriteLine($"Erro ao carregar dados: {ex.Message}");
+        }
+    }
+
+    private string GetPriorityClass(string priority) => priority?.ToLower() switch
+    {
+        "critica" => "danger",
+        "alta" => "warning",
+        "media" => "info",
+        "baixa" => "secondary",
+        _ => "light"
+    };
+
+    private string GetDepartmentIcon(string permission) => permission switch
+    {
+        "PAINEL TI" => "fas fa-laptop-code",
+        "PAINEL RH" => "fas fa-users",
+        "PAINEL FINANCEIRO" => "fas fa-chart-line",
+        "PAINEL OBRAS" => "fas fa-hard-hat",
+        "PAINEL COMERCIAL" => "fas fa-handshake",
+        "PAINEL JURIDICO" => "fas fa-gavel",
+        "PAINEL CONTABIL" => "fas fa-calculator",
+        _ => "fas fa-building"
+    };
+
+    private string GetDepartmentName(string permission) => permission switch
+    {
+        "PAINEL TI" => "Tecnologia da Informação",
+        "PAINEL RH" => "Recursos Humanos",
+        "PAINEL FINANCEIRO" => "Financeiro",
+        "PAINEL OBRAS" => "Obras",
+        "PAINEL COMERCIAL" => "Comercial",
+        "PAINEL JURIDICO" => "Jurídico",
+        "PAINEL CONTABIL" => "Contábil",
+        _ => permission
+    };
+
+    private string GetDepartmentUrl(string permission) => permission switch
+    {
+        "PAINEL TI" => "/ti",
+        "PAINEL RH" => "/rh",
+        "PAINEL FINANCEIRO" => "/financeiro",
+        "PAINEL OBRAS" => "/obras",
+        "PAINEL COMERCIAL" => "/comercial",
+        "PAINEL JURIDICO" => "/juridico",
+        "PAINEL CONTABIL" => "/contabil",
+        _ => "/"
+    };
+
+    private void ShowAddInformationModal()
+    {
+        editingInformation = null;
+        informationModel = new InformationModel();
+        showAddModal = true;
+    }
+
+    private void EditInformation(Information info)
+    {
+        editingInformation = info;
+        informationModel = new InformationModel
+        {
+            Content = info.Content,
+            Priority = info.Priority,
+            Sector = info.Sector
+        };
+        showAddModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showAddModal = false;
+        editingInformation = null;
+        informationModel = new InformationModel();
+    }
+
+    private async Task SaveInformation()
+    {
+        isLoading = true;
+        try
+        {
+            if (editingInformation != null)
+            {
+                // Atualizar
+                editingInformation.Content = informationModel.Content;
+                editingInformation.Priority = informationModel.Priority;
+                editingInformation.Sector = informationModel.Sector;
+                await InformationService.UpdateAsync(editingInformation);
+            }
+            else
+            {
+                // Criar novo
+                var newInfo = new Information
+                {
+                    Content = informationModel.Content,
+                    Priority = informationModel.Priority,
+                    Sector = informationModel.Sector,
+                    Status = "Ativo",
+                    CreatedAt = DateTime.Now
+                };
+                await InformationService.CreateAsync(newInfo);
+            }
+
+            await LoadData();
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao salvar informação: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteInformation(int id)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja excluir esta informação?"))
+        {
+            try
+            {
+                await InformationService.DeleteAsync(id);
+                await LoadData();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao excluir informação: {ex.Message}");
+            }
+        }
+    }
+
+    public class InformationModel
+    {
+        [Required(ErrorMessage = "Conteúdo é obrigatório")]
+        public string Content { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Prioridade é obrigatória")]
+        public string Priority { get; set; } = string.Empty;
+
+        public string Sector { get; set; } = "T";
+    }
+}

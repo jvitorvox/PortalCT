@@ -1,0 +1,458 @@
+@page "/ti"
+@using Microsoft.AspNetCore.Authorization
+@using PortalCT.Web.Services
+@inject IInformationService InformationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
+
+<PageTitle>Painel TI - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-laptop-code me-2"></i>
+                    Painel de Tecnologia da Informação
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">TI</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas TI -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Chamados Abertos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-ticket-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Sistemas Online
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">8/8</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-server fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Projetos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-project-diagram fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Backup Status
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">OK</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-database fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Chamados Recentes -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-list me-2"></i>
+                        Chamados Recentes
+                    </h6>
+                    <button class="btn btn-primary btn-sm" @onclick="ShowNewTicketModal">
+                        <i class="fas fa-plus me-1"></i>
+                        Novo Chamado
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Título</th>
+                                    <th>Solicitante</th>
+                                    <th>Prioridade</th>
+                                    <th>Status</th>
+                                    <th>Data</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ticket in sampleTickets)
+                                {
+                                    <tr>
+                                        <td><strong>#@ticket.Id</strong></td>
+                                        <td>@ticket.Title</td>
+                                        <td>@ticket.Requester</td>
+                                        <td>
+                                            <span class="badge bg-@GetPriorityColor(ticket.Priority)">
+                                                @ticket.Priority
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-@GetStatusColor(ticket.Status)">
+                                                @ticket.Status
+                                            </span>
+                                        </td>
+                                        <td>@ticket.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" @onclick="() => ViewTicket(ticket.Id)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success" @onclick="() => UpdateTicket(ticket.Id)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status dos Sistemas -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-server me-2"></i>
+                        Status dos Sistemas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var system in systemStatus)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <strong>@system.Name</strong>
+                                <br>
+                                <small class="text-muted">@system.Description</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-@(system.IsOnline ? "success" : "danger")">
+                                    <i class="fas fa-@(system.IsOnline ? "check" : "times") me-1"></i>
+                                    @(system.IsOnline ? "Online" : "Offline")
+                                </span>
+                            </div>
+                        </div>
+                        @if (system != systemStatus.Last())
+                        {
+                            <hr>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Projetos em Andamento -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-tasks me-2"></i>
+                        Projetos em Andamento
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @foreach (var project in activeProjects)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong>@project.Name</strong>
+                                <small class="text-muted">@project.Progress%</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-@GetProgressColor(project.Progress)" 
+                                     style="width: @project.Progress%"></div>
+                            </div>
+                            <small class="text-muted">@project.Description</small>
+                        </div>
+                        @if (project != activeProjects.Last())
+                        {
+                            <hr>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Novo Chamado -->
+@if (showNewTicketModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Chamado de TI</h5>
+                    <button type="button" class="btn-close" @onclick="CloseNewTicketModal"></button>
+                </div>
+                <EditForm Model="@newTicketModel" OnValidSubmit="@SaveNewTicket">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Título</label>
+                                <InputText @bind-Value="newTicketModel.Title" class="form-control" />
+                                <ValidationMessage For="@(() => newTicketModel.Title)" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Prioridade</label>
+                                <InputSelect @bind-Value="newTicketModel.Priority" class="form-select">
+                                    <option value="">Selecione...</option>
+                                    <option value="Baixa">Baixa</option>
+                                    <option value="Média">Média</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Crítica">Crítica</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => newTicketModel.Priority)" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <InputTextArea @bind-Value="newTicketModel.Description" class="form-control" rows="4" />
+                            <ValidationMessage For="@(() => newTicketModel.Description)" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Categoria</label>
+                                <InputSelect @bind-Value="newTicketModel.Category" class="form-select">
+                                    <option value="">Selecione...</option>
+                                    <option value="Hardware">Hardware</option>
+                                    <option value="Software">Software</option>
+                                    <option value="Rede">Rede</option>
+                                    <option value="Sistema">Sistema</option>
+                                    <option value="Outro">Outro</option>
+                                </InputSelect>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Solicitante</label>
+                                <InputText @bind-Value="newTicketModel.Requester" class="form-control" />
+                                <ValidationMessage For="@(() => newTicketModel.Requester)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseNewTicketModal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Criar Chamado
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool showNewTicketModal = false;
+    private bool isLoading = false;
+    private NewTicketModel newTicketModel = new();
+
+    // Dados de exemplo
+    private List<TicketModel> sampleTickets = new()
+    {
+        new() { Id = 1001, Title = "Problema no sistema de vendas", Requester = "João Silva", Priority = "Alta", Status = "Aberto", CreatedAt = DateTime.Now.AddDays(-2) },
+        new() { Id = 1002, Title = "Instalação de software", Requester = "Maria Santos", Priority = "Média", Status = "Em Andamento", CreatedAt = DateTime.Now.AddDays(-1) },
+        new() { Id = 1003, Title = "Configuração de impressora", Requester = "Pedro Costa", Priority = "Baixa", Status = "Resolvido", CreatedAt = DateTime.Now.AddHours(-3) },
+        new() { Id = 1004, Title = "Backup não executado", Requester = "Ana Lima", Priority = "Crítica", Status = "Aberto", CreatedAt = DateTime.Now.AddHours(-1) }
+    };
+
+    private List<SystemStatusModel> systemStatus = new()
+    {
+        new() { Name = "Portal Casa & Terra", Description = "Sistema principal", IsOnline = true },
+        new() { Name = "Sistema de Vendas", Description = "CRM e vendas", IsOnline = true },
+        new() { Name = "Sistema Financeiro", Description = "Gestão financeira", IsOnline = true },
+        new() { Name = "Backup Server", Description = "Servidor de backup", IsOnline = false },
+        new() { Name = "Email Server", Description = "Servidor de email", IsOnline = true }
+    };
+
+    private List<ProjectModel> activeProjects = new()
+    {
+        new() { Name = "Migração Portal", Description = "Migração para .NET Core", Progress = 85 },
+        new() { Name = "App Mobile", Description = "Aplicativo mobile", Progress = 45 },
+        new() { Name = "Backup Automático", Description = "Sistema de backup", Progress = 70 },
+        new() { Name = "Segurança", Description = "Auditoria de segurança", Progress = 30 }
+    };
+
+    private string GetPriorityColor(string priority) => priority?.ToLower() switch
+    {
+        "crítica" => "danger",
+        "alta" => "warning",
+        "média" => "info",
+        "baixa" => "secondary",
+        _ => "light"
+    };
+
+    private string GetStatusColor(string status) => status?.ToLower() switch
+    {
+        "aberto" => "primary",
+        "em andamento" => "warning",
+        "resolvido" => "success",
+        "fechado" => "secondary",
+        _ => "light"
+    };
+
+    private string GetProgressColor(int progress) => progress switch
+    {
+        >= 80 => "success",
+        >= 60 => "info",
+        >= 40 => "warning",
+        _ => "danger"
+    };
+
+    private void ShowNewTicketModal()
+    {
+        newTicketModel = new NewTicketModel();
+        showNewTicketModal = true;
+    }
+
+    private void CloseNewTicketModal()
+    {
+        showNewTicketModal = false;
+        newTicketModel = new NewTicketModel();
+    }
+
+    private async Task SaveNewTicket()
+    {
+        isLoading = true;
+        try
+        {
+            // Simular salvamento
+            await Task.Delay(1000);
+            
+            // Adicionar à lista (em um sistema real, salvaria no banco)
+            var newTicket = new TicketModel
+            {
+                Id = sampleTickets.Max(t => t.Id) + 1,
+                Title = newTicketModel.Title,
+                Requester = newTicketModel.Requester,
+                Priority = newTicketModel.Priority,
+                Status = "Aberto",
+                CreatedAt = DateTime.Now
+            };
+            
+            sampleTickets.Insert(0, newTicket);
+            CloseNewTicketModal();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao salvar chamado: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void ViewTicket(int ticketId)
+    {
+        // Implementar visualização do chamado
+        Console.WriteLine($"Visualizar chamado {ticketId}");
+    }
+
+    private void UpdateTicket(int ticketId)
+    {
+        // Implementar atualização do chamado
+        Console.WriteLine($"Atualizar chamado {ticketId}");
+    }
+
+    public class TicketModel
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Requester { get; set; } = string.Empty;
+        public string Priority { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class SystemStatusModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsOnline { get; set; }
+    }
+
+    public class ProjectModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public int Progress { get; set; }
+    }
+
+    public class NewTicketModel
+    {
+        [Required(ErrorMessage = "Título é obrigatório")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Descrição é obrigatória")]
+        public string Description { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Prioridade é obrigatória")]
+        public string Priority { get; set; } = string.Empty;
+
+        public string Category { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Solicitante é obrigatório")]
+        public string Requester { get; set; } = string.Empty;
+    }
+}

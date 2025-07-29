@@ -1,0 +1,201 @@
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">
+            <i class="fas fa-home me-2"></i>
+            Portal Casa & Terra
+        </a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Dashboard
+            </NavLink>
+        </div>
+
+        <AuthorizeView>
+            <Authorized>
+                @{
+                    var permissions = context.User.Claims
+                        .Where(c => c.Type == "Permission")
+                        .Select(c => c.Value)
+                        .ToList();
+                }
+
+                @if (permissions.Contains("PAINEL TI") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="ti">
+                            <i class="fas fa-laptop-code me-2"></i>
+                            Tecnologia da Informação
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL RH") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="rh">
+                            <i class="fas fa-users me-2"></i>
+                            Recursos Humanos
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL FINANCEIRO") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="financeiro">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Financeiro
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL OBRAS") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="obras">
+                            <i class="fas fa-hard-hat me-2"></i>
+                            Obras
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL COMERCIAL") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="comercial">
+                            <i class="fas fa-handshake me-2"></i>
+                            Comercial
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL JURIDICO") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="juridico">
+                            <i class="fas fa-gavel me-2"></i>
+                            Jurídico
+                        </NavLink>
+                    </div>
+                }
+
+                @if (permissions.Contains("PAINEL CONTABIL") || permissions.Contains("@@@@"))
+                {
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="contabil">
+                            <i class="fas fa-calculator me-2"></i>
+                            Contábil
+                        </NavLink>
+                    </div>
+                }
+
+                <!-- Separador -->
+                <hr class="sidebar-divider my-3">
+
+                <!-- Links Adicionais -->
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="planos-acao">
+                        <i class="fas fa-tasks me-2"></i>
+                        Planos de Ação
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="documentos">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Documentos
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="galeria">
+                        <i class="fas fa-images me-2"></i>
+                        Galeria
+                    </NavLink>
+                </div>
+
+                @if (permissions.Contains("@@@@"))
+                {
+                    <hr class="sidebar-divider my-3">
+                    <div class="sidebar-heading">
+                        Administração
+                    </div>
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="usuarios">
+                            <i class="fas fa-users-cog me-2"></i>
+                            Usuários
+                        </NavLink>
+                    </div>
+
+                    <div class="nav-item px-3">
+                        <NavLink class="nav-link" href="configuracoes">
+                            <i class="fas fa-cog me-2"></i>
+                            Configurações
+                        </NavLink>
+                    </div>
+                }
+            </Authorized>
+        </AuthorizeView>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
+
+<style>
+    .sidebar-divider {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin: 0 1rem;
+    }
+
+    .sidebar-heading {
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 1.5rem 1rem 0.5rem;
+        color: rgba(255, 255, 255, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 0.35rem;
+        margin: 0 0.5rem;
+    }
+
+    .nav-link.active {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 0.35rem;
+        margin: 0 0.5rem;
+    }
+</style>
