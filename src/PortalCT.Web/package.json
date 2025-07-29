@@ -1,0 +1,12 @@
+{
+  "name": "portalct-web",
+  "version": "1.0.0",
+  "description": "Portal Casa & Terra - Frontend assets",
+  "scripts": {
+    "build": "echo 'This is a .NET Blazor Server project. Use: dotnet build'",
+    "dev": "echo 'This is a .NET Blazor Server project. Use: dotnet run'",
+    "start": "echo 'This is a .NET Blazor Server project. Use: dotnet run'"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}
