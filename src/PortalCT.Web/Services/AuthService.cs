@@ -17,6 +17,8 @@ public class AuthService : IAuthService
 
     public async Task<AuthResult> AuthenticateAsync(string username, string password)
     {
+        await Task.CompletedTask;
+        
         try
         {
             // Em desenvolvimento, aceita qualquer usuário/senha
@@ -49,7 +51,7 @@ public class AuthService : IAuthService
                 Permissions = permissions
             };
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return new AuthResult
             {
