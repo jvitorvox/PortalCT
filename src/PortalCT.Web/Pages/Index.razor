@@ -2,10 +2,10 @@
 @using Microsoft.AspNetCore.Authorization
 @using System.ComponentModel.DataAnnotations
 @using PortalCT.Web.Services
+@inject IJSRuntime JSRuntime
 @inject IInformationService InformationService
 @inject IUserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IJSRuntime JSRuntime
 @attribute [Authorize]
 
 <PageTitle>Dashboard - Portal Casa & Terra</PageTitle>

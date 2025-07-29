@@ -1,0 +1,178 @@
+@page "/documentos"
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<PageTitle>Documentos - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-file-alt me-2"></i>
+                    Gestão de Documentos
+                </h2>
+                <button class="btn btn-primary">
+                    <i class="fas fa-upload me-1"></i>
+                    Upload Documento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Categoria</label>
+                            <select class="form-select">
+                                <option value="">Todas</option>
+                                <option value="contratos">Contratos</option>
+                                <option value="juridico">Jurídico</option>
+                                <option value="financeiro">Financeiro</option>
+                                <option value="obras">Obras</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select">
+                                <option value="">Todos</option>
+                                <option value="pdf">PDF</option>
+                                <option value="doc">Word</option>
+                                <option value="xls">Excel</option>
+                                <option value="img">Imagem</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Buscar</label>
+                            <input type="text" class="form-control" placeholder="Nome do documento...">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-primary w-100">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Documentos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-folder-open me-2"></i>
+                        Documentos Recentes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Tipo</th>
+                                    <th>Tamanho</th>
+                                    <th>Data Upload</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                                            <strong>Contrato_Venda_Apt301.pdf</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-primary">Contratos</span></td>
+                                    <td>PDF</td>
+                                    <td>2.4 MB</td>
+                                    <td>27/01/2025</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-word text-primary me-2"></i>
+                                            <strong>Planta_Baixa_TorreA.docx</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-warning">Obras</span></td>
+                                    <td>Word</td>
+                                    <td>5.1 MB</td>
+                                    <td>26/01/2025</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-excel text-success me-2"></i>
+                                            <strong>Planilha_Custos_Janeiro.xlsx</strong>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-success">Financeiro</span></td>
+                                    <td>Excel</td>
+                                    <td>890 KB</td>
+                                    <td>25/01/2025</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-outline-success">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Carregar documentos
+    }
+}

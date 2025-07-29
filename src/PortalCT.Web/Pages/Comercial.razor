@@ -1,0 +1,259 @@
+@page "/comercial"
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<PageTitle>Comercial - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-handshake me-2"></i>
+                    Painel Comercial
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Comercial</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas Comerciais -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Vendas do Mês
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 3.2M</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Leads Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">127</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Propostas Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-contract fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Taxa Conversão
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">24%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Vendas Recentes -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Vendas Recentes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Imóvel</th>
+                                    <th>Valor</th>
+                                    <th>Vendedor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>João Silva Santos</strong>
+                                        <br>
+                                        <small class="text-muted">joao@email.com</small>
+                                    </td>
+                                    <td>Apt 301 - Torre A</td>
+                                    <td class="text-success">R$ 450.000</td>
+                                    <td>Maria Vendas</td>
+                                    <td><span class="badge bg-success">Finalizada</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Ana Costa Lima</strong>
+                                        <br>
+                                        <small class="text-muted">ana@email.com</small>
+                                    </td>
+                                    <td>Casa 15 - Condomínio</td>
+                                    <td class="text-success">R$ 680.000</td>
+                                    <td>Pedro Comercial</td>
+                                    <td><span class="badge bg-warning">Documentação</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Carlos Mendes</strong>
+                                        <br>
+                                        <small class="text-muted">carlos@email.com</small>
+                                    </td>
+                                    <td>Sala 205 - Comercial</td>
+                                    <td class="text-success">R$ 280.000</td>
+                                    <td>Lucia Negócios</td>
+                                    <td><span class="badge bg-primary">Negociação</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline de Vendas -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-funnel-dollar me-2"></i>
+                        Pipeline de Vendas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Leads Qualificados</small>
+                            <small class="text-muted">45</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Propostas Enviadas</small>
+                            <small class="text-muted">28</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 28%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Negociações</small>
+                            <small class="text-muted">15</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: 15%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Vendas Fechadas</small>
+                            <small class="text-muted">8</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 8%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Vendedores -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-trophy me-2"></i>
+                        Top Vendedores
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Maria Vendas</strong>
+                                <br>
+                                <small class="text-muted">R$ 1.2M vendidos</small>
+                            </div>
+                            <span class="badge bg-warning">🥇</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Pedro Comercial</strong>
+                                <br>
+                                <small class="text-muted">R$ 980K vendidos</small>
+                            </div>
+                            <span class="badge bg-secondary">🥈</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Lucia Negócios</strong>
+                                <br>
+                                <small class="text-muted">R$ 750K vendidos</small>
+                            </div>
+                            <span class="badge bg-warning">🥉</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Carregar dados comerciais
+    }
+}

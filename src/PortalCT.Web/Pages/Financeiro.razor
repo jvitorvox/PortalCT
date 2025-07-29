@@ -1,0 +1,245 @@
+@page "/financeiro"
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<PageTitle>Financeiro - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Painel Financeiro
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Financeiro</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas Financeiras -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Receita Mensal
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 2.450.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Contas a Receber
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 890.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-credit-card fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Contas a Pagar
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 340.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Fluxo de Caixa
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 1.200.000</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Movimentações Recentes -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        Movimentações Recentes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Descrição</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>27/01/2025</td>
+                                    <td>Venda Apartamento - Torre A</td>
+                                    <td><span class="badge bg-success">Receita</span></td>
+                                    <td class="text-success">+ R$ 450.000,00</td>
+                                    <td><span class="badge bg-success">Confirmado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>26/01/2025</td>
+                                    <td>Pagamento Fornecedores</td>
+                                    <td><span class="badge bg-danger">Despesa</span></td>
+                                    <td class="text-danger">- R$ 85.000,00</td>
+                                    <td><span class="badge bg-success">Pago</span></td>
+                                </tr>
+                                <tr>
+                                    <td>25/01/2025</td>
+                                    <td>Financiamento Bancário</td>
+                                    <td><span class="badge bg-info">Financeiro</span></td>
+                                    <td class="text-success">+ R$ 1.200.000,00</td>
+                                    <td><span class="badge bg-success">Aprovado</span></td>
+                                </tr>
+                                <tr>
+                                    <td>24/01/2025</td>
+                                    <td>Folha de Pagamento</td>
+                                    <td><span class="badge bg-danger">Despesa</span></td>
+                                    <td class="text-danger">- R$ 180.000,00</td>
+                                    <td><span class="badge bg-warning">Pendente</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo Financeiro -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        Vencimentos Próximos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Financiamento Banco ABC</strong>
+                                <br>
+                                <small class="text-muted">Vencimento: 30/01/2025</small>
+                            </div>
+                            <span class="badge bg-warning">R$ 45.000</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Impostos Municipais</strong>
+                                <br>
+                                <small class="text-muted">Vencimento: 05/02/2025</small>
+                            </div>
+                            <span class="badge bg-danger">R$ 28.500</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Fornecedor Material</strong>
+                                <br>
+                                <small class="text-muted">Vencimento: 10/02/2025</small>
+                            </div>
+                            <span class="badge bg-info">R$ 67.800</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Indicadores
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Margem de Lucro</small>
+                            <small class="text-muted">32%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-success" style="width: 32%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Inadimplência</small>
+                            <small class="text-muted">5%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" style="width: 5%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Liquidez</small>
+                            <small class="text-muted">78%</small>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Carregar dados financeiros
+    }
+}

@@ -1,0 +1,250 @@
+@page "/juridico"
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<PageTitle>Jurídico - Portal Casa & Terra</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-gavel me-2"></i>
+                    Painel Jurídico
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Jurídico</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de Estatísticas Jurídicas -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Processos Ativos
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">23</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Contratos Assinados
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">156</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-signature fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Prazos Vencendo
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">7</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Documentos Pendentes
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Processos em Andamento -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-folder-open me-2"></i>
+                        Processos em Andamento
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Processo</th>
+                                    <th>Tipo</th>
+                                    <th>Cliente/Parte</th>
+                                    <th>Status</th>
+                                    <th>Próximo Prazo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>001/2025</strong>
+                                        <br>
+                                        <small class="text-muted">Ação de Cobrança</small>
+                                    </td>
+                                    <td><span class="badge bg-info">Cível</span></td>
+                                    <td>João Silva Santos</td>
+                                    <td><span class="badge bg-warning">Aguardando Citação</span></td>
+                                    <td>05/02/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>002/2025</strong>
+                                        <br>
+                                        <small class="text-muted">Regularização Imóvel</small>
+                                    </td>
+                                    <td><span class="badge bg-success">Imobiliário</span></td>
+                                    <td>Construtora ABC</td>
+                                    <td><span class="badge bg-primary">Em Análise</span></td>
+                                    <td>10/02/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>003/2025</strong>
+                                        <br>
+                                        <small class="text-muted">Rescisão Contratual</small>
+                                    </td>
+                                    <td><span class="badge bg-warning">Contratual</span></td>
+                                    <td>Maria Costa Lima</td>
+                                    <td><span class="badge bg-danger">Urgente</span></td>
+                                    <td>30/01/2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações Laterais -->
+        <div class="col-lg-4 mb-4">
+            <!-- Prazos Próximos -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-calendar-exclamation me-2"></i>
+                        Prazos Próximos
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Contestação - Proc. 003/2025</strong>
+                                <br>
+                                <small class="text-muted">Vencimento: 30/01/2025</small>
+                            </div>
+                            <span class="badge bg-danger">2 dias</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Recurso - Proc. 001/2025</strong>
+                                <br>
+                                <small class="text-muted">Vencimento: 05/02/2025</small>
+                            </div>
+                            <span class="badge bg-warning">8 dias</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Audiência - Proc. 002/2025</strong>
+                                <br>
+                                <small class="text-muted">Data: 10/02/2025</small>
+                            </div>
+                            <span class="badge bg-info">13 dias</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentos Pendentes -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-file-import me-2"></i>
+                        Documentos Pendentes
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Certidão Negativa</strong>
+                                <br>
+                                <small class="text-muted">Processo 001/2025</small>
+                            </div>
+                            <span class="badge bg-warning">Pendente</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Procuração</strong>
+                                <br>
+                                <small class="text-muted">Cliente João Silva</small>
+                            </div>
+                            <span class="badge bg-danger">Urgente</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <div>
+                                <strong>Contrato Social</strong>
+                                <br>
+                                <small class="text-muted">Construtora ABC</small>
+                            </div>
+                            <span class="badge bg-info">Análise</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Carregar dados jurídicos
+    }
+}
