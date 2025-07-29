@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Create a non-root user
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser /app
+RUN adduser --disabled-password --gecos '\' appuser && chown -R appuser /app
 USER appuser
 
 ENTRYPOINT ["dotnet", "PortalCT.Web.dll"]
