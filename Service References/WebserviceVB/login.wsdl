@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://webservicect.casaeterra.com/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://webservicect.casaeterra.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://webservicect.casaeterra.com/">
+      <s:element name="loginad">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="nome" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="loginadResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="loginadResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getpermissoes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="usuario" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getpermissoesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getpermissoesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="logincli">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cpf" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtnasc" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="logincliResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="logincliResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getboletos">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cpf" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dtnasc" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getboletosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="getboletosResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Dadoscli">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cpf" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="wquitados" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DadoscliResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DadoscliResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Gravaescri">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cpf" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cliente" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="obs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="telefone" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="wprioridade" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lote" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GravaescriResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GravaescriResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Gravatransf">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="cpf" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cliente" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="obs" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="email" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="telefone" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="lote" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GravatransfResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GravatransfResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Statusobra">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="empresa" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="obra" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="StatusobraResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="StatusobraResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="loginadSoapIn">
+    <wsdl:part name="parameters" element="tns:loginad" />
+  </wsdl:message>
+  <wsdl:message name="loginadSoapOut">
+    <wsdl:part name="parameters" element="tns:loginadResponse" />
+  </wsdl:message>
+  <wsdl:message name="getpermissoesSoapIn">
+    <wsdl:part name="parameters" element="tns:getpermissoes" />
+  </wsdl:message>
+  <wsdl:message name="getpermissoesSoapOut">
+    <wsdl:part name="parameters" element="tns:getpermissoesResponse" />
+  </wsdl:message>
+  <wsdl:message name="logincliSoapIn">
+    <wsdl:part name="parameters" element="tns:logincli" />
+  </wsdl:message>
+  <wsdl:message name="logincliSoapOut">
+    <wsdl:part name="parameters" element="tns:logincliResponse" />
+  </wsdl:message>
+  <wsdl:message name="getboletosSoapIn">
+    <wsdl:part name="parameters" element="tns:getboletos" />
+  </wsdl:message>
+  <wsdl:message name="getboletosSoapOut">
+    <wsdl:part name="parameters" element="tns:getboletosResponse" />
+  </wsdl:message>
+  <wsdl:message name="DadoscliSoapIn">
+    <wsdl:part name="parameters" element="tns:Dadoscli" />
+  </wsdl:message>
+  <wsdl:message name="DadoscliSoapOut">
+    <wsdl:part name="parameters" element="tns:DadoscliResponse" />
+  </wsdl:message>
+  <wsdl:message name="GravaescriSoapIn">
+    <wsdl:part name="parameters" element="tns:Gravaescri" />
+  </wsdl:message>
+  <wsdl:message name="GravaescriSoapOut">
+    <wsdl:part name="parameters" element="tns:GravaescriResponse" />
+  </wsdl:message>
+  <wsdl:message name="GravatransfSoapIn">
+    <wsdl:part name="parameters" element="tns:Gravatransf" />
+  </wsdl:message>
+  <wsdl:message name="GravatransfSoapOut">
+    <wsdl:part name="parameters" element="tns:GravatransfResponse" />
+  </wsdl:message>
+  <wsdl:message name="StatusobraSoapIn">
+    <wsdl:part name="parameters" element="tns:Statusobra" />
+  </wsdl:message>
+  <wsdl:message name="StatusobraSoapOut">
+    <wsdl:part name="parameters" element="tns:StatusobraResponse" />
+  </wsdl:message>
+  <wsdl:portType name="loginSoap">
+    <wsdl:operation name="loginad">
+      <wsdl:input message="tns:loginadSoapIn" />
+      <wsdl:output message="tns:loginadSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getpermissoes">
+      <wsdl:input message="tns:getpermissoesSoapIn" />
+      <wsdl:output message="tns:getpermissoesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="logincli">
+      <wsdl:input message="tns:logincliSoapIn" />
+      <wsdl:output message="tns:logincliSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getboletos">
+      <wsdl:input message="tns:getboletosSoapIn" />
+      <wsdl:output message="tns:getboletosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Dadoscli">
+      <wsdl:input message="tns:DadoscliSoapIn" />
+      <wsdl:output message="tns:DadoscliSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Gravaescri">
+      <wsdl:input message="tns:GravaescriSoapIn" />
+      <wsdl:output message="tns:GravaescriSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Gravatransf">
+      <wsdl:input message="tns:GravatransfSoapIn" />
+      <wsdl:output message="tns:GravatransfSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Statusobra">
+      <wsdl:input message="tns:StatusobraSoapIn" />
+      <wsdl:output message="tns:StatusobraSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="loginSoap" type="tns:loginSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="loginad">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/loginad" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getpermissoes">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/getpermissoes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="logincli">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/logincli" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getboletos">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/getboletos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Dadoscli">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/Dadoscli" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Gravaescri">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/Gravaescri" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Gravatransf">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/Gravatransf" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Statusobra">
+      <soap:operation soapAction="http://webservicect.casaeterra.com/Statusobra" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="loginSoap12" type="tns:loginSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="loginad">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/loginad" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getpermissoes">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/getpermissoes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="logincli">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/logincli" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getboletos">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/getboletos" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Dadoscli">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/Dadoscli" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Gravaescri">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/Gravaescri" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Gravatransf">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/Gravatransf" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Statusobra">
+      <soap12:operation soapAction="http://webservicect.casaeterra.com/Statusobra" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="login">
+    <wsdl:port name="loginSoap" binding="tns:loginSoap">
+      <soap:address location="http://webservicect.casaeterra.com/login.asmx" />
+    </wsdl:port>
+    <wsdl:port name="loginSoap12" binding="tns:loginSoap12">
+      <soap12:address location="http://webservicect.casaeterra.com/login.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

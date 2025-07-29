@@ -1,0 +1,479 @@
+﻿Imports System.Web.Services
+Imports System.Data
+Imports System.Data.SqlClient
+Imports System.Globalization
+Imports System.IO
+Imports System.Net.NetworkInformation
+Imports System.Timers
+Imports System.Drawing
+Imports System
+Imports System.Net.Mail
+Imports System.Net
+
+Public Class ti
+    Inherits System.Web.UI.Page
+
+    Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+        If Not IsPostBack Then
+            Dim usuario As String = ""
+            usuario = Session("usuario")
+            lbluser.Text = " " + RTrim(Session("usuario"))
+            If lbluser.Text.Trim = "" Then
+                lbluser.Text = "Guest"
+            End If
+            'envia email de  acesso - Mudei para gravar log
+            Dim Nenvia As String = "alexander.valerio,ruann,gilvan.junior,jose.rodrigues,olympio.santos,Guest,andre.souza"
+            Dim hostName As String
+            Dim ipAddr() As IPAddress
+            hostName = System.Net.Dns.GetHostName()
+            ipAddr = Dns.GetHostAddresses(hostName)
+
+
+            If Not Nenvia.Contains(lbluser.Text.Trim) Then
+                ' enviamail(lbluser.Text, "alexander.valerio@casaeterra.com")
+                gravalog()
+            End If
+            atualsis()
+            atualinfra()
+            atualtotsys()
+        End If
+
+    End Sub
+
+    Private Sub gravalog()
+        Dim conexaoBD = New SqlConnection(My.Settings.conexaobancoTI)
+        Dim strquery As String
+        strquery = " INSERT INTO LOGS(USUARIO, ROTINA,DATA, HORA) 
+                    VALUES (' " + lbluser.Text.Trim + "
+                     ','Portal TI',convert(char,getdate(),103), left(CONVERT (time, GETDATE()),5))"
+
+        Dim command As SqlCommand = New SqlCommand(strquery, conexaoBD)
+        Dim dr As SqlDataReader
+        Dim dt As New DataTable
+        conexaoBD.Open()
+        dr = command.ExecuteReader
+
+
+        conexaoBD.Close()
+    End Sub
+
+
+    Private Sub atualtotsys()
+        'Nao pagos
+        Dim conexaoBD = New SqlConnection(My.Settings.conexaobancoTI)
+        Dim sqlcomando As String = " SELECT COUNT(setor) AS TOTAL 
+                                        FROM OCORRENCIAS 
+                                    WHERE MONTH(convert(date,data,103)) = MONTH(GETDATE()) AND AREATI = 'Sistemas' AND  YEAR(getdate())= YEAR(convert(date,data,103))"
+        Dim command As SqlCommand = New SqlCommand(sqlcomando)
+        Dim dr As SqlDataReader
+        Dim dt As New DataTable
+        Dim dr2 As SqlDataReader
+        Dim dt2 As New DataTable
+        command.Connection = conexaoBD
+        conexaoBD.Open()
+        dr = command.ExecuteReader
+        dt.Load(dr)
+        lblSysNovas.Text = Int(dt(0).ItemArray(0))
+        command.CommandText = "SELECT COUNT(setor) AS TOTAL 
+                                FROM OCORRENCIAS  WHERE MONTH(convert(date,dataret,103)) = MONTH(GETDATE()) 
+                                AND AREATI = 'Sistemas' AND  YEAR(getdate())= YEAR(convert(date,dataret,103)) 
+                                AND  STATUS  = 'Resolvido'"
+        dr2 = command.ExecuteReader
+        dt2.Load(dr2)
+        lblSysResol.Text = Int(dt2(0).ItemArray(0))
+        conexaoBD.Close()
+    End Sub
+    Private Sub atualsis()
+        Dim conexaoBD = New SqlConnection(My.Settings.conexaobancoTI)
+        Dim strquery As String
+        strquery = " SELECT ID,DATA, HORA, SOLICITANTE,OCORRENCIA,PRAZO,ANALISTA,STATUS, " +
+                        "Case PRIORIDADE " +
+                            "WHEN 'Critica' THEN '1' " +
+                            "WHEN 'Alta' THEN '2' " +
+                            "WHEN 'Media' THEN '3' " +
+                            "WHEN 'Baira' THEN '4' " +
+                            "Else   '4' " +
+                        "End As PRIO, " +
+                        "COMPLEX AS COMPL   " +
+                        "From ocorrencias  " +
+                "Where areati = 'Sistemas' "
+        If txtdemamda.Text.Trim = String.Empty Then
+            strquery = strquery + " And (status = 'Pendente' OR STATUS= 'Em Analise' OR STATUS= 'Desenvolvimento' OR STATUS= 'Homolog' OR STATUS= 'Gmud' OR STATUS= 'Documentacao' OR (STATUS= 'Recusada' AND YEAR(getdate())= YEAR(convert(date,dataret,103)) AND MONTH(convert(date,dataret,103))= MONTH(getdate()))) "
+        Else
+            strquery = strquery + " And id = " & txtdemamda.Text
+        End If
+        strquery = strquery + " Order By STATUS, PRIO, SUBSTRING(PRAZO, 7, 4) + SUBSTRING(PRAZO, 4, 2) + SUBSTRING(PRAZO, 1, 2),HORA  "
+
+        Dim command As SqlCommand = New SqlCommand(strquery, conexaoBD)
+        Dim dr As SqlDataReader
+        Dim dt As New DataTable
+        conexaoBD.Open()
+        dr = command.ExecuteReader
+        dt.Load(dr)
+        'caso esteja vazio
+        If dt.Rows.Count = 0 Then
+            command.CommandText = "SELECT TOP 1 'Nao Ha Ocorrencias ' AS SISTEMAS FROM OCORRENCIAS"
+            dr = command.ExecuteReader
+            dt.Load(dr)
+        End If
+        grdsistemas.DataSource = dt
+        grdsistemas.DataBind()
+        Cache("dts") = dt
+        'The first sorting combination saved here
+        ViewState("Column_Name") = "ANALISTA"
+        ViewState("Sort_Order") = "ASC"
+        conexaoBD.Close()
+
+    End Sub
+    Private Sub atualinfra()
+        Dim ntotal As Integer = 0
+        Dim nresolvidas As Integer = 0
+        Dim conexaoBD = New SqlConnection(My.Settings.conexaobancoHlp)
+        Dim conexaoBD2 = New SqlConnection(My.Settings.conexaobancoTI)
+        Dim strquery As String
+        strquery = "select  *  from VW_PAINELTI_HELPDESK
+            order by [Data da Solicitação] desc "
+
+        Dim command As SqlCommand = New SqlCommand(strquery, conexaoBD)
+        Dim dr As SqlDataReader
+        Dim dt As New DataTable
+        conexaoBD.Open()
+        dr = command.ExecuteReader
+        dt.Load(dr)
+        'caso esteja vazio
+        If dt.Rows.Count = 0 Then
+            command.CommandText = "SELECT TOP 1 'Nao Ha Ocorrencias ' AS Infra FROM  VW_PAINELTI_HELPDESK"
+            dr = command.ExecuteReader
+            dt.Load(dr)
+        End If
+        grdInfra.DataSource = dt
+        grdInfra.DataBind()
+        Cache("dti") = dt
+        'The first sorting combination saved here
+        ViewState("Column_Name") = "SOLICITANTE"
+        ViewState("Sort_Order") = "ASC"
+        ntotal = dt.Rows.Count
+        conexaoBD.Close()
+        'total de demandas finalizadas
+        Dim command2 As SqlCommand = New SqlCommand(strquery, conexaoBD2)
+        Dim dr2 As SqlDataReader
+        Dim dt2 As New DataTable
+        command2.CommandText = "SELECT SUM(QUANT) AS TOTAL 
+                                FROM INFRA 
+                                WHERE MONTH(convert(date,data,103)) = MONTH(GETDATE()) AND  YEAR(getdate())= YEAR(convert(date,data,103)) "
+        conexaoBD2.Open()
+        dr2 = command2.ExecuteReader
+        dt2.Load(dr2)
+        'caso esteja vazio
+        If dt2.Rows.Count < 1 Then
+            nresolvidas = 0
+        Else
+            If dt2(0).ItemArray(0).ToString = "" Then
+                nresolvidas = 0
+            Else
+                nresolvidas = Format(CDbl(dt2(0).ItemArray(0)), "C2")
+            End If
+
+        End If
+        lblNovasInfra.Text = ntotal + nresolvidas
+        lblResolinfra.Text = nresolvidas
+
+        conexaoBD.Close()
+
+    End Sub
+    Private Sub grdsistemas_Sorting(sender As Object, e As GridViewSortEventArgs) Handles grdsistemas.Sorting
+        If e.SortExpression = ViewState("Column_Name").ToString() Then
+            If ViewState("Sort_Order").ToString() = "ASC" Then
+                RebindData(e.SortExpression, "DESC")
+            Else
+                RebindData(e.SortExpression, "ASC")
+            End If
+        Else
+            RebindData(e.SortExpression, "ASC")
+        End If
+    End Sub
+    Private Sub RebindData(sColimnName As String, sSortOrder As String)
+        Dim dt As DataTable = CType(Cache("dts"), DataTable)
+        dt.DefaultView.Sort = sColimnName + " " + sSortOrder
+        grdsistemas.DataSource = dt
+        grdsistemas.DataBind()
+        ViewState("Column_Name") = sColimnName
+        ViewState("Sort_Order") = sSortOrder
+    End Sub
+
+    Private Sub grdInfra_Sorting(sender As Object, e As GridViewSortEventArgs) Handles grdInfra.Sorting
+        If e.SortExpression = ViewState("Column_Name").ToString() Then
+            If ViewState("Sort_Order").ToString() = "ASC" Then
+                RebindData2(e.SortExpression, "DESC")
+            Else
+                RebindData2(e.SortExpression, "ASC")
+            End If
+        Else
+            RebindData2(e.SortExpression, "ASC")
+        End If
+    End Sub
+    Private Sub RebindData2(sColimnName As String, sSortOrder As String)
+        Dim dt As DataTable = CType(Cache("dti"), DataTable)
+        dt.DefaultView.Sort = sColimnName + " " + sSortOrder
+        grdInfra.DataSource = dt
+        grdInfra.DataBind()
+        ViewState("Column_Name") = sColimnName
+        ViewState("Sort_Order") = sSortOrder
+    End Sub
+
+    Private Sub grdInfra_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles grdInfra.RowDataBound
+        Dim strimageurl As String = "imagens/Yelow.jpg"
+        Dim decodedText1 As String
+        Dim endimage As String
+
+
+        ' verifica se  a linha é de dados e tem todas as colunas
+        If e.Row.Cells.Count > 1 Then
+
+            ' Verifica  coluna Prioridade
+            endimage = "<img src=Imagens/branco.png />"
+            If e.Row.Cells(5).Text.Trim <> "Prioridade" And e.Row.Cells(5).Text.Trim <> "&nbsp;" And e.Row.Cells(5).Text.Trim <> "" Then
+                If e.Row.Cells(5).Text.Trim = "#666666" Then  'Baixa
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.White
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/cinza.png />"
+                ElseIf e.Row.Cells(5).Text.Trim = "#ff0000" Then   'Alta
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.Red
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.Red
+                    endimage = "<img src=Imagens/vermelho.png />"
+                ElseIf e.Row.Cells(5).Text.Trim = "#ff6600" Then 'Media
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.Yellow
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.Yellow
+                    endimage = "<img src=Imagens/amarelo.png />"
+                ElseIf e.Row.Cells(5).Text.Trim = "#00ffff" Then 'Negociavel
+                    endimage = "<img src=Imagens/azul.png />"
+                Else
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.Black
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/branco.png />"
+                End If
+                decodedText1 = HttpUtility.HtmlDecode(endimage)
+                e.Row.Cells(5).Text = decodedText1
+            End If
+        End If
+
+    End Sub
+    Private Sub grdsistemas_RowDataBound(sender As Object, e As GridViewRowEventArgs) Handles grdsistemas.RowDataBound
+        Dim strimageurl As String = "imagens/Yelow.jpg"
+        Dim wdias As Integer
+        Dim wdata As Date
+        Dim wtempo As Integer
+        Dim decodedText1 As String
+        Dim endimage As String
+
+
+        ' verifica se  a linha é de dados e tem todas as colunas
+        If e.Row.Cells.Count > 1 Then
+
+            'Verifica  coluna status
+            If e.Row.Cells(5).Text.Trim <> "PRAZO" And e.Row.Cells(8).Text.Trim <> "1" Then
+                For b As Integer = 1 To 9
+                    If e.Row.Cells(b).Text.Trim = "&nbsp;" Then
+                        e.Row.Cells(b).Text = ""
+                    End If
+                Next
+
+                If e.Row.Cells(7).Text.Trim = "Homolog" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.DarkBlue
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+
+                ElseIf e.Row.Cells(7).Text.Trim = "Em Analise" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.LightGray
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+
+                ElseIf e.Row.Cells(7).Text.Trim = "Gmud" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.CornflowerBlue
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+
+                ElseIf e.Row.Cells(7).Text.Trim = "Desenvolvimento" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.Wheat
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.Black
+                ElseIf e.Row.Cells(7).Text.Trim = "Waiting" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.Green
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+                ElseIf e.Row.Cells(7).Text.Trim = "Recusada" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.Purple
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+                ElseIf e.Row.Cells(7).Text.Trim = "Documentacao" Then
+                    e.Row.Cells(5).BackColor = System.Drawing.Color.DarkSalmon
+                    e.Row.Cells(5).ForeColor = System.Drawing.Color.Black
+                Else
+
+                    If e.Row.Cells(5).Text.Trim <> "" Then
+                        wdata = Convert.ToDateTime(e.Row.Cells(5).Text.Trim)
+                        wdias = DateTime.Compare(wdata, Date.Now)
+                        wtempo = wdias
+                    Else
+                        wtempo = 0
+                    End If
+
+                    If Left(wdata.ToString, 5) = Left(Date.Now.ToString, 5) Then
+                        wtempo = 0
+                    End If
+
+                    If wtempo > 0 Then
+                        e.Row.Cells(5).BackColor = System.Drawing.Color.DarkGreen
+                        e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+                    ElseIf wtempo = 0 And e.Row.Cells(5).Text.Trim <> "" Then
+                        e.Row.Cells(5).BackColor = System.Drawing.Color.LemonChiffon
+                        e.Row.Cells(5).ForeColor = System.Drawing.Color.Black
+                    ElseIf wtempo < 0 Then
+                        e.Row.Cells(5).BackColor = System.Drawing.Color.Red
+                        e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+                    ElseIf wtempo = 0 And e.Row.Cells(5).Text.Trim = "" Then
+                        '   e.Row.Cells(5).BackColor = System.Drawing.Color.White
+                        '   e.Row.Cells(5).ForeColor = System.Drawing.Color.Black
+                    Else
+                        e.Row.Cells(5).BackColor = System.Drawing.Color.LemonChiffon
+                        e.Row.Cells(5).ForeColor = System.Drawing.Color.Black
+                    End If
+                    'Dim imgIconeStatus As WebControls.Image = e.Row.FindControl("imgIconeStatus")
+                    'imgIconeStatus.ImageUrl = strimageurl
+                End If
+
+            ElseIf e.Row.Cells(5).Text.Trim = "&nbsp;" And e.Row.Cells(7).Text.Trim = "Em Analise" Then
+                e.Row.Cells(5).BackColor = System.Drawing.Color.LightGray
+                e.Row.Cells(5).ForeColor = System.Drawing.Color.White
+
+            End If
+
+            ' Verifica  coluna Prioridade
+            endimage = "<img src=Imagens/branco.png />"
+            If e.Row.Cells(8).Text.Trim <> "PRIO" And e.Row.Cells(8).Text.Trim <> "&nbsp;" And e.Row.Cells(8).Text.Trim <> "" Then
+                If e.Row.Cells(8).Text.Trim = "4" Then  'Baixa
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.White
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/branco.png />"
+                ElseIf e.Row.Cells(8).Text.Trim = "2" Then   'Alta
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.Red
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.Red
+                    endimage = "<img src=Imagens/vermelho.png />"
+                ElseIf e.Row.Cells(8).Text.Trim = "3" Then 'Media
+                    'e.Row.Cells(8).BackColor = System.Drawing.Color.Yellow
+                    'e.Row.Cells(8).ForeColor = System.Drawing.Color.Yellow
+                    endimage = "<img src=Imagens/amarelo.png />"
+                ElseIf e.Row.Cells(8).Text.Trim = "1" Then 'Critica
+                    e.Row.Cells(8).BackColor = System.Drawing.Color.Black
+                    e.Row.Cells(8).ForeColor = System.Drawing.Color.Black
+                    'gvSistemas.Rows(RowIndex).DefaultCellStyle.BackColor = red
+                    If e.Row.Cells(6).Text.Trim = "Gilvan" Then
+                        e.Row.BackColor = Drawing.Color.Fuchsia
+                        e.Row.ForeColor = Drawing.Color.White
+                        e.Row.Cells(8).BackColor = System.Drawing.Color.Fuchsia
+                        e.Row.Cells(8).ForeColor = System.Drawing.Color.Fuchsia
+                    Else
+                        e.Row.BackColor = Drawing.Color.Black
+                        e.Row.ForeColor = Drawing.Color.White
+                    End If
+                Else
+                    e.Row.Cells(8).BackColor = System.Drawing.Color.Black
+                    e.Row.Cells(8).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/branco.png />"
+                End If
+                decodedText1 = HttpUtility.HtmlDecode(endimage)
+                e.Row.Cells(8).Text = decodedText1
+            End If
+
+            ' Verifica  coluna Complexidade
+
+            If e.Row.Cells(9).Text.Trim <> "COMPL" And e.Row.Cells(9).Text.Trim <> "&nbsp;" And e.Row.Cells(8).Text.Trim <> "1" And e.Row.Cells(8).Text.Trim <> "" Then
+                If e.Row.Cells(9).Text.Trim = "Baixa" Then
+                    ' e.Row.Cells(9).BackColor = System.Drawing.Color.White
+                    'e.Row.Cells(9).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/branco.png />"
+                ElseIf e.Row.Cells(9).Text.Trim = "Alta" Then
+                    'e.Row.Cells(9).BackColor = System.Drawing.Color.Red
+                    'e.Row.Cells(9).ForeColor = System.Drawing.Color.Red
+                    endimage = "<img src=Imagens/vermelho.png />"
+                ElseIf e.Row.Cells(9).Text.Trim = "Media" Then
+                    'e.Row.Cells(9).BackColor = System.Drawing.Color.Yellow
+                    'e.Row.Cells(9).ForeColor = System.Drawing.Color.Yellow
+                    endimage = "<img src=Imagens/amarelo.png />"
+                Else
+                    'e.Row.Cells(9).BackColor = System.Drawing.Color.White
+                    'e.Row.Cells(9).ForeColor = System.Drawing.Color.White
+                    endimage = "<img src=Imagens/branco.png />"
+                End If
+                decodedText1 = HttpUtility.HtmlDecode(endimage)
+                e.Row.Cells(9).Text = decodedText1
+            End If
+
+        End If
+    End Sub
+
+    Protected Sub btnFiltro_Click(sender As Object, e As EventArgs) Handles btnFiltro.Click
+        atualsis()
+    End Sub
+
+    Private Sub enviamail(usuario As String, destinatario As String)
+        Dim mail As New MailMessage
+        Dim texto As String
+        Dim objSmtp As New SmtpClient
+        Dim email As String = destinatario
+
+        'texto = "<HTML><BODY>Demanda,    "
+        'texto += ocorrencia & " Inserida em nossa base "
+        'texto += "<br>"
+        'texto += "</BODY></HTML>"
+
+        texto = "<HTML><BODY><div style=""text-align: center; font-size: 20px;"">
+            Portal TI
+            </div>
+                    <br/>
+                    <br/>"
+
+        texto += " Usuario: " & usuario & "
+            <br/>
+            <br/>
+            Acessou o portal  em " & Now.ToString & "
+        <br />
+        <br />
+            Departamento de TI - Casa e Terra
+</BODY></HTML>"
+
+        'Adicionando o e-mail do remetente
+        mail.From = New MailAddress("suporte@casaeterra.com")
+        'Adicionando o e-mail do destinatário
+        mail.To.Add(New MailAddress(email))
+        'Enviar cópia para.
+        mail.CC.Add("ruann.lima@casaeterra.com")
+        mail.CC.Add("gilvan.junior@casaeterra.com")
+        mail.CC.Add("jose.rodrigues@casaeterra.com")
+        mail.CC.Add("olympio.santos@casaeterra.com")
+        'Adiciona a prioridade do e-mail
+        mail.Priority = MailPriority.High
+        'Adicionando o assunto ao atributo assunto
+        mail.Subject = "Notificacao de Demanda de TI"
+        'Formato de e-mail em Html?
+        mail.IsBodyHtml = True
+        'Inserir o corpo da mensagem no atributo Body
+        mail.Body = texto
+        'Configuração do IP do servidor SMTP
+        objSmtp.Host = "smtp.casaeterra.com"
+        objSmtp.Port = "587"
+        'Configuração de tipagem da linguagem, para não aparecer caracteres estranhos na mensagem
+        mail.SubjectEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1")
+        mail.BodyEncoding = System.Text.Encoding.GetEncoding("ISO-8859-1")
+
+        'Autenticacao
+        objSmtp.Credentials = New System.Net.NetworkCredential("suporte@casaeterra.com", "Asm123sia")
+        'Habilitar SSL ou não? 
+        objSmtp.EnableSsl = False
+
+        'Enviando a mensagem por e-mail
+        Try
+            objSmtp.Send(mail)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            mail.Dispose()
+        End Try
+        mail.Dispose()
+    End Sub
+
+End Class
