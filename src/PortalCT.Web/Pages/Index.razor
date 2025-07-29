@@ -5,6 +5,7 @@
 @inject IInformationService InformationService
 @inject IUserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
 @attribute [Authorize]
 
 <PageTitle>Dashboard - Portal Casa & Terra</PageTitle>
@@ -407,7 +408,7 @@
 
     private async Task DeleteInformation(int id)
     {
-        if (await JSRuntime.InvokeAsync<bool>("confirm", "Tem certeza que deseja excluir esta informação?"))
+        if (await JSRuntime.InvokeAsync<bool>("confirm", new object[] { "Tem certeza que deseja excluir esta informação?" }))
         {
             try
             {
