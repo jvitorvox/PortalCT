@@ -1,0 +1,197 @@
+/* Global Styles */
+:root {
+    --ct-primary: #337ab7;
+    --ct-secondary: #2ea7eb;
+    --ct-success: #1cc09f;
+    --ct-warning: #ffb53e;
+    --ct-danger: #f9243f;
+    --ct-info: #30a5ff;
+    --ct-light: #f8f9fa;
+    --ct-dark: #283643;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* Login Styles */
+.login-container {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--ct-primary) 0%, var(--ct-secondary) 100%);
+    z-index: -1;
+}
+
+.login-panel {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-logo {
+    max-width: 150px;
+    height: auto;
+}
+
+/* Navigation Styles */
+.sidebar {
+    background: linear-gradient(180deg, var(--ct-primary) 0%, var(--ct-dark) 100%);
+}
+
+.top-row {
+    background: var(--ct-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 8px;
+}
+
+.nav-link:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+    padding: 1.5rem;
+}
+
+.hover-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 1.5rem;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border: none;
+    font-weight: 600;
+}
+
+/* Priority Indicators */
+.priority-indicator {
+    font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .login-panel {
+        margin: 1rem;
+        padding: 2rem;
+    }
+    
+    .dashboard-container {
+        padding: 1rem;
+    }
+}
+
+/* Blazor Error UI */
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Custom Bootstrap Overrides */
+.btn-primary {
+    background-color: var(--ct-primary);
+    border-color: var(--ct-primary);
+}
+
+.btn-primary:hover {
+    background-color: #2c5aa0;
+    border-color: #2c5aa0;
+}
+
+.text-primary {
+    color: var(--ct-primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--ct-primary) !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}

@@ -1,0 +1,184 @@
+@page "/login"
+@using PortalCT.Core.DTOs
+@using PortalCT.Core.Interfaces
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using System.Security.Claims
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Login - Portal Casa & Terra</PageTitle>
+
+<div class="login-container">
+    <div class="login-background"></div>
+    
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <!-- Painel Esquerdo -->
+            <div class="col-lg-7 d-none d-lg-flex align-items-center justify-content-center">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bold mb-4">Portal Casa & Terra</h1>
+                    <p class="lead">Construindo histórias, desenvolvendo pessoas, transformando cidades.</p>
+                </div>
+            </div>
+            
+            <!-- Painel de Login -->
+            <div class="col-lg-5 d-flex align-items-center justify-content-center">
+                <div class="login-panel">
+                    <div class="text-center mb-4">
+                        <img src="images/logo.png" alt="Casa & Terra" class="login-logo mb-3">
+                        <h2 class="h4 text-primary">Conecte-se</h2>
+                    </div>
+
+                    <EditForm Model="@loginRequest" OnValidSubmit="@HandleLogin">
+                        <DataAnnotationsValidator />
+                        
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>@errorMessage
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Usuário</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <InputText @bind-Value="loginRequest.Username" 
+                                          class="form-control" 
+                                          id="username" 
+                                          placeholder="Insira seu usuário" />
+                            </div>
+                            <ValidationMessage For="@(() => loginRequest.Username)" class="text-danger" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Senha</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <InputText @bind-Value="loginRequest.Password" 
+                                          type="password" 
+                                          class="form-control" 
+                                          id="password" 
+                                          placeholder="Senha" />
+                            </div>
+                            <ValidationMessage For="@(() => loginRequest.Password)" class="text-danger" />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mb-3" disabled="@isLoading">
+                            @if (isLoading)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <span>Entrando...</span>
+                            }
+                            else
+                            {
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                <span>ENTRAR</span>
+                            }
+                        </button>
+                    </EditForm>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="ShowPolicyModal">
+                            <i class="fas fa-file-pdf me-1"></i>
+                            Política de Segurança
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal da Política de Segurança -->
+<div class="modal fade" id="policyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Política de Segurança da Informação</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="documentos/Politica de Seguranca da Informacao 2025.pdf" 
+                        width="100%" 
+                        height="500" 
+                        style="border: none;">
+                </iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private LoginRequest loginRequest = new();
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
+
+    private async Task HandleLogin()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var result = await AuthService.AuthenticateAsync(loginRequest.Username, loginRequest.Password);
+
+            if (result.IsSuccess && result.User != null)
+            {
+                // Criar claims para autenticação
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, result.User.Username),
+                    new Claim(ClaimTypes.Email, result.User.Email),
+                    new Claim("FullName", result.User.FullName),
+                    new Claim("UserId", result.User.Id.ToString())
+                };
+
+                // Adicionar permissões como claims
+                foreach (var permission in result.Permissions)
+                {
+                    claims.Add(new Claim("Permission", permission));
+                }
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = false,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
+
+                await JSRuntime.InvokeVoidAsync("eval", 
+                    $"document.cookie = '{CookieAuthenticationDefaults.AuthenticationScheme}={result.User.Username}; path=/; max-age=1800'");
+
+                Navigation.NavigateTo("/", true);
+            }
+            else
+            {
+                errorMessage = result.Message;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Erro interno do servidor. Tente novamente.";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ShowPolicyModal()
+    {
+        await JSRuntime.InvokeVoidAsync("eval", 
+            "new bootstrap.Modal(document.getElementById('policyModal')).show()");
+    }
+}
